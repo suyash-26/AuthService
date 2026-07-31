@@ -3,12 +3,17 @@ package com.example.authService.entities;
 import com.example.authService.enums.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
+import lombok.*;
 
 import java.util.List;
 
 @Entity
-@Data
+@Table(name = "users")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,6 +29,7 @@ public class User {
     private String email;
     private List<Long> contactNumber;
     private Role role;
+    private boolean isActive = true;
 
     public  String getFullName(){
         return this.firstName + " " + this.middleName + " " + this.lastName;

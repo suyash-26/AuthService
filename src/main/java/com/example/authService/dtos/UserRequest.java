@@ -8,7 +8,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UserRequest {
-    @NotBlank
     private String firstName;
-
+    private String middleName;
+    private String lastName;
+    @Email
+    private String email;
 }
