@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -31,9 +32,10 @@ public class User {
     private Role role;
     private boolean isActive = true;
 
-    @ManyToOne
-    @JoinColumn(name = "address_id")
-    private Address address;
+    // Inverse side: FK lives on Address (user_id) since a user can have more than one.
+    @Builder.Default
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Address> addresses = new ArrayList<>();
 
     public  String getFullName(){
         return this.firstName + " " + this.middleName + " " + this.lastName;
