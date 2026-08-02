@@ -31,6 +31,10 @@ public class User {
     private Role role;
     private boolean isActive = true;
 
+    @ManyToOne
+    @JoinColumn(name = "address_id")
+    private Address address;
+
     public  String getFullName(){
         return this.firstName + " " + this.middleName + " " + this.lastName;
     }
