@@ -1,8 +1,6 @@
 package com.example.authService.contrillers;
 
-import com.example.authService.dtos.SignupRequest;
-import com.example.authService.dtos.UserRequest;
-import com.example.authService.dtos.UserResponse;
+import com.example.authService.dtos.*;
 import com.example.authService.security.CustomUserDetails;
 import com.example.authService.services.UserService;
 import lombok.AllArgsConstructor;
@@ -22,6 +20,10 @@ public class UserController {
     @PostMapping("/signup")
     public ResponseEntity<UserResponse> addUser(@RequestBody SignupRequest user){
         return ResponseEntity.ok(userService.addUser(user));
+    }
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest){
+        return ResponseEntity.ok(userService.loginUser(loginRequest));
     }
     @GetMapping("/")
     public ResponseEntity<List<UserResponse>> getAllUsers(){

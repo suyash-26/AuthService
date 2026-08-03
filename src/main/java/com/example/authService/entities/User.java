@@ -7,6 +7,8 @@ import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 @Entity
 @Table(name = "users")
@@ -37,7 +39,11 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Address> addresses = new ArrayList<>();
 
-    public  String getFullName(){
-        return this.firstName + " " + this.middleName + " " + this.lastName;
+    public  String getName(){
+        return Stream.of(firstName, middleName, lastName)
+                .filter(Objects::nonNull)
+                .filter(s -> !s.isBlank())
+                .reduce((a, b) -> a + " " + b)
+                .orElse("");
     }
 }
