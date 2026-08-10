@@ -6,7 +6,6 @@ import com.example.authService.security.JwtAuthenticationFilter;
 import com.example.authService.security.JwtService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -45,16 +44,12 @@ public class SecurityConfig {
                 // No server-side session is created/used — every request must carry its own JWT.
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // Public endpoints: signup/login can't require a token you don't have yet,
+                        // Public endpoints: register/login can't require a token you don't have yet,
                         // and the H2 console is a dev tool, not an app endpoint.
-                        .requestMatchers("/h2-console/**", "/users/addUser", "/users/login").permitAll()
-                        // Product catalog browsing is public, same as any storefront — auth is only
-                        // needed for cart/checkout/orders/profile and for product/image mutations
-                        // (POST/DELETE below still fall through to anyRequest().authenticated()).
-                        .requestMatchers(HttpMethod.GET, "/products", "/productImages/images/**").permitAll()
-                        // Everything else requires a valid, authenticated request.
-//                        .anyRequest().authenticated()
-                                .anyRequest().permitAll()
+                        .requestMatchers("/h2-console/**", "/auth/register", "/auth/login").permitAll()
+                        // Everything else — including /auth/me and all of /addresses — requires a
+                        // valid, authenticated request.
+                        .anyRequest().authenticated()
                 )
                 // Without this, a missing/invalid token on a protected endpoint falls through to
                 // Spring's default AccessDeniedHandler and returns 403 (anonymous auth is enabled by
@@ -62,7 +57,7 @@ public class SecurityConfig {
                 // makes that case return the semantically correct 401 instead.
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(
                         (request, response, authException) ->
-                                response.sendError(HttpStatus.UNAUTHORIZED.value(), "Unauthorized")
+                                response.sendError(HttpStatus.UNAUTHORIZED.value(), "Unauthorized Error")
                 ))
                 // Runs our JWT check before Spring's own username/password filter, so that by the
                 // time authorization rules above are evaluated, SecurityContextHolder is already

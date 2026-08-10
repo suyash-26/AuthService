@@ -46,7 +46,7 @@ public class DataInitializer implements CommandLineRunner {
                         .lastName("Johnson")
                         .email("michael.johnson@example.com")
                         .password(passwordEncoder.encode("Password@123"))
-                        .role(Role.ADMIN)
+                        .role(Role.SUPER_ADMIN)
                         .build(),
 
                 User.builder()
@@ -100,7 +100,7 @@ public class DataInitializer implements CommandLineRunner {
                         .lastName("Davis")
                         .email("james.davis@example.com")
                         .password(passwordEncoder.encode("Password@123"))
-                        .role(Role.ADMIN)
+                        .role(Role.SUPER_ADMIN)
                         .build(),
 
                 User.builder()

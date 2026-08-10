@@ -1,6 +1,7 @@
 package com.example.authService.enums;
 
 public enum Role {
-    USER,
-    ADMIN
+    SUPER_ADMIN,
+    CENTER_ADMIN,
+    USER
 }

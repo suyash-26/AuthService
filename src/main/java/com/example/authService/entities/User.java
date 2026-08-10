@@ -30,7 +30,9 @@ public class User {
     private String password;
     @Column(nullable = false, unique = true)
     private String email;
-    private List<Long> contactNumber;
+    // Platform-wide role from the v2 hierarchy (SUPER_ADMIN / CENTER_ADMIN / USER).
+    // Stored as STRING so the enum can gain values without shifting existing rows.
+    @Enumerated(EnumType.STRING)
     private Role role;
     private boolean isActive = true;
 

@@ -1,9 +1,10 @@
 package com.example.authService.dtos;
 
-import com.example.authService.entities.User;
 import com.example.authService.enums.Role;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -14,6 +15,8 @@ public class UserResponse {
     private String middleName;
     private String lastName;
     private String email;
+    private Role role;
+    private List<AddressResponse> addresses;
 
     private UserResponse(Builder builder) {
         this.id = builder.id;
@@ -21,6 +24,8 @@ public class UserResponse {
         this.middleName = builder.middleName;
         this.lastName = builder.lastName;
         this.email = builder.email;
+        this.role = builder.role;
+        this.addresses = builder.addresses;
     }
 
     public static class Builder {
@@ -29,6 +34,8 @@ public class UserResponse {
         private String middleName;
         private String lastName;
         private String email;
+        private Role role;
+        private List<AddressResponse> addresses;
 
         public Builder id(Long id) {
             this.id = id;
@@ -52,6 +59,16 @@ public class UserResponse {
 
         public Builder email(String email) {
             this.email = email;
+            return this;
+        }
+
+        public Builder role(Role role) {
+            this.role = role;
+            return this;
+        }
+
+        public Builder addresses(List<AddressResponse> addresses){
+            this.addresses = addresses;
             return this;
         }
 
