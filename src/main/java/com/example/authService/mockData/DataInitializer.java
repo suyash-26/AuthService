@@ -19,6 +19,12 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
+        // Guard against a persistent DB (e.g. the Neon prod database): without this,
+        // every restart re-inserts the same 10 emails and crashes on the unique
+        // constraint. Fine to skip entirely once the table already has data.
+        if (userRepository.count() > 0) {
+            return;
+        }
 
         userRepository.saveAll(List.of(
 

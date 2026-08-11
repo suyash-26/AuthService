@@ -36,10 +36,13 @@ public class UserService {
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
         }
-        Map<String, Object> toknData = new HashMap<>();
-        toknData.put("id",user.getId());
-        toknData.put("name",user.getName());
-        String token = jwtService.generateToken(user.getEmail(),toknData);
+        Map<String, Object> tokenData = new HashMap<>();
+        tokenData.put("id",user.getId());
+        tokenData.put("name",user.getName());
+        // Core has no users table to look up a role from — it can only get it off the
+        // token itself, so it has to travel as a claim rather than be re-derived later.
+        tokenData.put("role", user.getRole() != null ? user.getRole().name() : null);
+        String token = jwtService.generateToken(user.getEmail(),tokenData);
         LoginResponse loginResponse = new LoginResponse();
         loginResponse.setToken(token);
         loginResponse.setId(user.getId());
