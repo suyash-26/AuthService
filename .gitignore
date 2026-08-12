@@ -33,8 +33,6 @@ build/
 .vscode/
 
 # ignore local and prod properties files
-src/main/resources/application-local.properties
-src/main/resources/application-prod.properties
 
 # ignore real cloud credentials; keep .env.example checked in as the template
 .env
