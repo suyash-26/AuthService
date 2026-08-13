@@ -7,6 +7,7 @@ import com.example.authService.security.JwtService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -19,7 +20,12 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
+// @EnableMethodSecurity is what makes @PreAuthorize on controller methods actually get
+// enforced — without it, an annotation like @PreAuthorize("hasRole('SUPER_ADMIN')") is
+// silently ignored and every authenticated user can call the endpoint. This was missing
+// and left the role-update endpoint open to any logged-in user, including self-escalation.
 @Configuration
+@EnableMethodSecurity
 public class SecurityConfig {
 
     @Bean

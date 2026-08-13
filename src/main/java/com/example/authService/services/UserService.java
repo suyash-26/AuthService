@@ -75,6 +75,29 @@ public class UserService {
         return toUserResponse(user);
     }
 
+
+    // Platform-level role change — gated to SUPER_ADMIN at the controller
+    // (@PreAuthorize). Not exposed to self-registration; see registerUser().
+    public UserResponse updateUserRole(Long userId, String role){
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+        Role newRole;
+        try {
+            newRole = Role.valueOf(role.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid role: " + role);
+        }
+
+        user.setRole(newRole);
+        // findById's transaction has already closed by this point, so the entity is
+        // detached — setRole() alone only mutates the in-memory object. Without this
+        // save(), the change never reaches the database despite the endpoint
+        // reporting success.
+        User savedUser = userRepository.save(user);
+        return toUserResponse(savedUser);
+    }
+
     private UserResponse toUserResponse(User user) {
         return UserResponse.builder()
                 .id(user.getId())
