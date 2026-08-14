@@ -5,6 +5,7 @@ import com.example.authService.dtos.LoginRequest;
 import com.example.authService.dtos.LoginResponse;
 import com.example.authService.dtos.SignupRequest;
 import com.example.authService.dtos.UserResponse;
+import com.example.authService.dtos.UserSummaryResponse;
 import com.example.authService.entities.Address;
 import com.example.authService.entities.User;
 import com.example.authService.enums.Role;
@@ -76,6 +77,20 @@ public class UserService {
     }
 
 
+    // Admin browse/search — gated to SUPER_ADMIN at the controller. blank/null search
+    // returns everyone; otherwise one free-text term matched against first/last name
+    // or email, so an admin can find who to grant access to without knowing their
+    // exact id upfront. Returns the lean summary shape (no addresses) — walking every
+    // user's addresses collection across a whole list would be an N+1 lazy-load per row.
+    public List<UserSummaryResponse> getAllUsers(String search){
+        List<User> users = (search == null || search.isBlank())
+                ? userRepository.findAll()
+                : userRepository.findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCaseOrEmailContainingIgnoreCase(
+                        search, search, search);
+
+        return users.stream().map(this::toSummaryResponse).toList();
+    }
+
     // Platform-level role change — gated to SUPER_ADMIN at the controller
     // (@PreAuthorize). Not exposed to self-registration; see registerUser().
     public UserResponse updateUserRole(Long userId, String role){
@@ -96,6 +111,17 @@ public class UserService {
         // reporting success.
         User savedUser = userRepository.save(user);
         return toUserResponse(savedUser);
+    }
+
+    private UserSummaryResponse toSummaryResponse(User user) {
+        return UserSummaryResponse.builder()
+                .id(user.getId())
+                .firstName(user.getFirstName())
+                .middleName(user.getMiddleName())
+                .lastName(user.getLastName())
+                .email(user.getEmail())
+                .role(user.getRole())
+                .build();
     }
 
     private UserResponse toUserResponse(User user) {
