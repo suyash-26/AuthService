@@ -51,8 +51,9 @@ public class SecurityConfig {
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         // Public endpoints: register/login can't require a token you don't have yet,
-                        // and the H2 console is a dev tool, not an app endpoint.
-                        .requestMatchers("/h2-console/**", "/auth/register", "/auth/login").permitAll()
+                        // the H2 console is a dev tool, and /health is an unauthenticated liveness
+                        // check for an external keep-alive pinger (Render's free tier).
+                        .requestMatchers("/h2-console/**", "/auth/register", "/auth/login", "/health").permitAll()
                         // Everything else — including /auth/me and all of /addresses — requires a
                         // valid, authenticated request.
                         .anyRequest().authenticated()
